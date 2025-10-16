@@ -1,6 +1,8 @@
 #ifndef PAYOUI_GLOBALS
 #define PAYOUI_GLOBALS
 
+#define CLEAR_ALL "\033[2J\033[H"
+
 #define NORMAL  "\x1B[0m"
 #define RED  "\x1B[0;31m"
 #define GREEN  "\x1B[0;32m"
@@ -28,4 +30,5 @@
 #define BGCYAN "\x1B[46m"
 #define BGWHITE "\x1B[47m"
 
+#define COLOR_SIZE 8
 #endif

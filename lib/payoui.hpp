@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "definitions.h"
+#include <string.h>
 
 #if __linux__
 
@@ -24,7 +25,7 @@ namespace PUI {
 			struct winsize size;
 			ioctl(1, TIOCGWINSZ, &size);
 			cols = size.ws_col;
-			rows = size.ws_row;	
+			rows = size.ws_row;
 			
 			this->startRawMode();
 			setbuf(stdout, nullptr);
@@ -32,11 +33,29 @@ namespace PUI {
 		}
 
 		void clear(){
-			write(STDOUT_FILENO, "\033[2J\033[H", 7);
+			write(
+				STDOUT_FILENO,
+		 		CLEAR_ALL,
+		 		strlen(CLEAR_ALL)
+			);
 		}
 
 		void fastWrite(const char * data, size_t length){
 			write(STDOUT_FILENO, data, length);
+		}
+
+		void fastColorWrite(
+			const char * color,
+			const char * data,
+			size_t dataLength
+		){
+
+			// TODO: Impelementar un struct Color para
+			// tener un control más fino sobre el color
+			// del texto en la terminal
+			write(STDOUT_FILENO, color, COLOR_SIZE);
+			write(STDOUT_FILENO, data ,dataLength);
+
 		}
 
 		void moveCursor(int x, int y){
