@@ -2,6 +2,8 @@
 #define PAYOUI_GLOBALS
 
 #define CLEAR_ALL "\033[2J\033[H"
+#define SHOW_CURSOR "\e[?25h"
+#define HIDE_CURSOR "\e[?25l"
 
 #define NORMAL  "\x1B[0m"
 #define RED  "\x1B[0;31m"
