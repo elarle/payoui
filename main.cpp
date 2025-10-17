@@ -8,20 +8,17 @@ int main() {
 	//El clear no funciona bien
 	term.clear();
 
-	//TODO Implementar funcion para solo colores
+	term.hideCursor();
 
-	term.moveCursor(term.cols / 2, term.rows / 2);
-   	term.fastColorWrite(BBLUE, "PAYO", 4);
-
-	term.moveCursor((term.cols / 2), (term.rows / 2) + 1);
-	term.fastColorWrite(BLUE, "MAN", 3);
-
-	term.moveCursor((term.cols / 2), (term.rows / 2) + -1);
-	term.fastColorWrite(RED, "SUPER", 5);
-
-	term.fastWrite(NORMAL, 8);
+	term.moveCursor(term.cols/2 - 32, term.rows/2);
+	term.fastTextWrite("Esto se ha escrito mientras el otro hilo está funcionando");
+	term.moveCursor(term.cols/2 - 32, term.rows/2 + 1);
+	term.fastTextWrite("Pulsa q para salir");
+	
+	//Para que quede la pantalla entera limpia
 	term.moveCursor(term.cols, term.rows);
 
+	//Muy importante cerrar antes de acabar el programa;
 	term.close();
 
 	return 0;
