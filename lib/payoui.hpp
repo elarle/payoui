@@ -61,19 +61,37 @@ namespace PUI {
 			write(STDOUT_FILENO, data, length);
 		}
 
-		void fastColorWrite(
-			const char * color,
-			const char * data,
-			size_t dataLength
-		){
-
-			// TODO: Impelementar un struct Color para
-			// tener un control más fino sobre el color
-			// del texto en la terminal
-			write(STDOUT_FILENO, color, COLOR_SIZE);
-			write(STDOUT_FILENO, data ,dataLength);
-
+		//PRE={00 <= red <= 255;0 <= green <= 255; <= blue <= 255;}
+		//POST={Sets the text foreground to the specified color}
+		void setForegroundRGB(uint8_t red, uint8_t green, uint8_t blue){
+			char text_buffer[32];
+			size_t buffer_length = snprintf(
+				text_buffer, 
+				sizeof(text_buffer), 
+				"\033[38;2;%u;%u;%um",
+				red, 
+				green,
+				blue
+			);
+			this->writeBytes(text_buffer, buffer_length);
 		}
+
+		//PRE={00 <= red <= 255;0 <= green <= 255; <= blue <= 255;}
+		//POST={Sets the text background to the specified color}
+		void setBackgroundRGB(uint8_t red, uint8_t green, uint8_t blue){
+			char text_buffer[32];
+			size_t buffer_length = snprintf(
+				text_buffer, 
+				sizeof(text_buffer), 
+				"\033[48;2;%u;%u;%um",
+				red, 
+				green,
+				blue
+			);
+			this->writeBytes(text_buffer, buffer_length);
+		}
+
+
 
 		/**
 		 * =========================
