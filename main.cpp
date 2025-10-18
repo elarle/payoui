@@ -1,5 +1,70 @@
 #include "lib/payoui.hpp"
 
+#define FRAME_CHARS 
+
+struct FrameDecorations{
+	const char * TOP_LEFT = "╔";
+	const char * TOP_RIGHT = "╗";
+	const char * BOTTOM_LEFT = "╚";
+	const char * BOTTOM_RIGHT = "╝";
+	const char * VERTICAL = "║";
+	const char * HORIZONTAL = "═";
+};
+
+void drawFrame(
+	PUI::Terminal * terminal, 
+	size_t x, 
+	size_t y, 
+	size_t width, 
+	size_t height, 
+	FrameDecorations deco = FrameDecorations{}
+) {
+	
+	terminal->moveCursor(x, y);
+
+	terminal->writeText(deco.TOP_LEFT);
+
+	//Top line
+	for(size_t i = 1; i < width-1; i++){
+		terminal->writeText(deco.HORIZONTAL);
+	}
+
+	terminal->writeText(deco.TOP_RIGHT);
+	terminal->moveCursor(x, y + height - 1);
+	terminal->writeText(deco.BOTTOM_LEFT);
+
+	//Bottom line
+	for(size_t i = 0; i < width - 2; i++){
+		terminal->writeText(deco.HORIZONTAL);
+	}
+
+	terminal->writeText(deco.BOTTOM_RIGHT);
+
+	terminal->moveCursor(x, y);
+
+	for(size_t i = 1; i < height-1; i++){
+		//Left line
+		terminal->moveCursor(x, y+i);
+		terminal->writeText(deco.VERTICAL);
+
+		//Right line
+		terminal->moveCursor(x+width-1, y+i);
+		terminal->writeText(deco.VERTICAL);
+	}
+}
+
+//Showcase function
+void drawTextFramed(PUI::Terminal * terminal, const char * text){
+	size_t length = strlen(text);
+	drawFrame(terminal, terminal->cols/2 - length/2, terminal->rows/2 - 1, length + 1, 3);
+	terminal->moveCursor(terminal->cols/2 - length/2 + 1, terminal->rows/2);
+	terminal->writeText(BGBLUE);
+	terminal->writeText(BWHITE);
+	terminal->writeText(text);
+	terminal->writeText(BGNORMAL);
+	terminal->writeText(NORMAL);
+}
+
 int main() {
 
 	PUI::Terminal term;
@@ -10,9 +75,10 @@ int main() {
 
 	term.hideCursor();
 
-	term.moveCursor(term.cols/2 - 32, term.rows/2);
-	term.writeText("Esto se ha escrito mientras el otro hilo está funcionando");
-	term.moveCursor(term.cols/2 - 32, term.rows/2 + 1);
+	term.writeText(BWHITE);
+	drawTextFramed(&term, "Esto se ha escrito mientras el otro hilo está funcionando");
+	
+	term.moveCursor(term.cols/2 - 32, term.rows/2 + 2);
 	term.writeText("Pulsa q para salir");
 
 	//Para que quede la pantalla entera limpia
