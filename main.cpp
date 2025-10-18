@@ -11,10 +11,10 @@ int main() {
 	term.hideCursor();
 
 	term.moveCursor(term.cols/2 - 32, term.rows/2);
-	term.fastTextWrite("Esto se ha escrito mientras el otro hilo está funcionando");
+	term.writeText("Esto se ha escrito mientras el otro hilo está funcionando");
 	term.moveCursor(term.cols/2 - 32, term.rows/2 + 1);
-	term.fastTextWrite("Pulsa q para salir");
-	
+	term.writeText("Pulsa q para salir");
+
 	//Para que quede la pantalla entera limpia
 	term.moveCursor(term.cols, term.rows);
 

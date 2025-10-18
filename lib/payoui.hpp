@@ -49,14 +49,14 @@ namespace PUI {
 		 * =====================
 		 */
 
-		void fastBytesWrite(const void * data, size_t length){
+		void writeBytes(const void * data, size_t length){
 			write(STDOUT_FILENO, data, length);
 		}
 
 		/**
 		 * Esto debe ser llamado solo con texto estático
 		 */
-		void fastTextWrite(const char * data){
+		void writeText(const char * data){
 			size_t length = strlen(data);
 			write(STDOUT_FILENO, data, length);
 		}
@@ -97,11 +97,11 @@ namespace PUI {
 		}
 
 		void showCursor(){
-			this->fastTextWrite(SHOW_CURSOR);
+			this->writeText(SHOW_CURSOR);
 		}
 		
 		void hideCursor(){
-			this->fastTextWrite(HIDE_CURSOR);
+			this->writeText(HIDE_CURSOR);
 		}
 
 		/**
