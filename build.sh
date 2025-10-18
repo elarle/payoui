@@ -6,7 +6,3 @@ if [[ ! -e build ]]; then
 fi
 g++ main.cpp -o build/main
 echo "Compilado."
-echo 
-echo 
-echo " === Salida del programa === "
-./build/main
