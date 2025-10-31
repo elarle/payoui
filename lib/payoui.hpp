@@ -27,13 +27,19 @@ namespace PUI {
 	} TerminalStatuses;
 	typedef uint8_t TerminalStatus;
 
+
 	struct Terminal{
 
 		TerminalStatus status;
 		std::thread * listener_thread = nullptr;
 
+		void (*onKeyPress)(char) = nullptr;
+
 		size_t cols = 0;
 		size_t rows = 0;
+
+		int cursor_x = 0;
+		int cursor_y = 0;
 
 		void clear(){
 			write(
@@ -103,7 +109,7 @@ namespace PUI {
 
 			char text_buffer[32];
 			size_t buffer_length = snprintf(
-				text_buffer, 
+				text_buffer,
 				sizeof(text_buffer), 
 				"\033[%d;%dH", 
 				y, 
@@ -111,7 +117,9 @@ namespace PUI {
 			);
 
 			write(STDOUT_FILENO, text_buffer, buffer_length);
-
+			
+			cursor_x = x;
+			cursor_y = y;
 		}
 
 		void showCursor(){
@@ -185,8 +193,10 @@ namespace PUI {
 			char input_char;
 			while(terminal->status == RUNNING){
 				read(STDIN_FILENO, &input_char, 1);
-
-				//TODO implementar una funcion que maneje la entrada dependiendo de una configuración.
+				
+				if(terminal->onKeyPress != nullptr){
+					terminal->onKeyPress(input_char);
+				}
 
 				//Solución temporal
 				if(input_char == 'q')

@@ -66,7 +66,7 @@ void drawTextFramed(PUI::Terminal * terminal, const char * text){
 		//If it's an utf-8 char it needs at least 2 bytes to print correclty.
 		//So +1 if its > 127!!!!
 		uint8_t utf8_fix = !!(text[i] & 0b10000000);
-		terminal->writeBytes(&text[i], utf8_fix + 1);
+		terminal->writeBytes(&text[i], 1 + utf8_fix);
 		i+=utf8_fix;
 	}
 
@@ -74,9 +74,50 @@ void drawTextFramed(PUI::Terminal * terminal, const char * text){
 	terminal->writeText(NORMAL);
 }
 
+PUI::Terminal term;
+bool modo_especial = false;
+
+void manejarEntrada(char entrada){
+	switch(entrada){
+
+		case ':': {
+			
+			modo_especial = !modo_especial;
+			term.moveCursor(3, 2);
+			
+			if(modo_especial){
+				term.writeText("MODO ESPECIAL:    ACTIVADO");
+				break;
+			}
+
+			term.writeText("MODO ESPECIAL: DESACTIVADO");
+			break;
+
+		}
+	}
+}
+
+int ask(
+	PUI::Terminal * term,
+	const char * question,
+	const char ** opciones,
+	size_t numero_opciones
+){
+
+	term->writeText(question);
+	term->moveCursor(term->cursor_x, term->cursor_y+1);
+
+	for(size_t i = 0; i < numero_opciones; i++){
+		term->writeText(opciones[i]);
+		term->moveCursor(term->cursor_x, term->cursor_y+1);
+	}
+
+	return -1;
+}
+
 int main() {
 
-	PUI::Terminal term;
+	term.onKeyPress = &manejarEntrada;
 	term.init();
 	
 	//El clear no funciona bien
@@ -86,7 +127,7 @@ int main() {
 
 	term.writeText(BWHITE);
 	drawTextFramed(&term, "Esto se ha escrito mientras el otro hilo está funcionando");
-	
+
 	term.moveCursor(term.cols/2 - 32, term.rows/2 + 2);
 	term.writeText("Pulsa q para salir");
 
