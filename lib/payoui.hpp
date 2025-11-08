@@ -28,12 +28,15 @@ namespace PUI {
 	typedef uint8_t TerminalStatus;
 
 
+	template <typename CTX>
 	struct Terminal{
 
 		TerminalStatus status;
+		CTX * context = nullptr;
+
 		std::thread * listener_thread = nullptr;
 
-		void (*onKeyPress)(char) = nullptr;
+		void (*onKeyPress)(Terminal *, char) = nullptr;
 
 		size_t cols = 0;
 		size_t rows = 0;
@@ -155,7 +158,9 @@ namespace PUI {
 
 		}
 
-		void init(){
+		void init(CTX * context_p){
+
+			this->context = context_p;
 
 			struct winsize size;
 			ioctl(1, TIOCGWINSZ, &size);
@@ -195,7 +200,7 @@ namespace PUI {
 				read(STDIN_FILENO, &input_char, 1);
 				
 				if(terminal->onKeyPress != nullptr){
-					terminal->onKeyPress(input_char);
+					terminal->onKeyPress(terminal, input_char);
 				}
 
 				//Solución temporal

@@ -11,8 +11,12 @@ struct FrameDecorations{
 	const char * HORIZONTAL = "═";
 };
 
+struct ExampleContext{
+	bool modo_especial = false;
+};
+
 void drawFrame(
-	PUI::Terminal * terminal, 
+	PUI::Terminal<ExampleContext> * terminal, 
 	size_t x, 
 	size_t y, 
 	size_t width, 
@@ -54,7 +58,7 @@ void drawFrame(
 }
 
 //Showcase function
-void drawTextFramed(PUI::Terminal * terminal, const char * text){
+void drawTextFramed(PUI::Terminal<ExampleContext> * terminal, const char * text){
 	size_t length = strlen(text);
 	drawFrame(terminal, terminal->cols/2 - length/2, terminal->rows/2 - 1, length + 1, 3);
 	terminal->moveCursor(terminal->cols/2 - length/2 + 1, terminal->rows/2);
@@ -74,23 +78,23 @@ void drawTextFramed(PUI::Terminal * terminal, const char * text){
 	terminal->writeText(NORMAL);
 }
 
-PUI::Terminal term;
-bool modo_especial = false;
+PUI::Terminal<ExampleContext> term;
 
-void manejarEntrada(char entrada){
+//We may use a reference instead of a pointer
+void manejarEntrada(PUI::Terminal<ExampleContext> * term, char entrada){
 	switch(entrada){
 
 		case ':': {
 			
-			modo_especial = !modo_especial;
-			term.moveCursor(3, 2);
+			term->context->modo_especial = !term->context->modo_especial;
+			term->moveCursor(3, 2);
 			
-			if(modo_especial){
-				term.writeText("MODO ESPECIAL:    ACTIVADO");
+			if(term->context->modo_especial){
+				term->writeText("MODO ESPECIAL:    ACTIVADO");
 				break;
 			}
 
-			term.writeText("MODO ESPECIAL: DESACTIVADO");
+			term->writeText("MODO ESPECIAL: DESACTIVADO");
 			break;
 
 		}
@@ -98,7 +102,7 @@ void manejarEntrada(char entrada){
 }
 
 int ask(
-	PUI::Terminal * term,
+	PUI::Terminal<ExampleContext> * term,
 	const char * question,
 	const char ** opciones,
 	size_t numero_opciones
@@ -117,8 +121,11 @@ int ask(
 
 int main() {
 
+	ExampleContext ctx{};
+	ctx.modo_especial = true;
+
 	term.onKeyPress = &manejarEntrada;
-	term.init();
+	term.init(&ctx);
 	
 	//El clear no funciona bien
 	term.clear();
